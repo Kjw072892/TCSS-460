@@ -1,0 +1,6 @@
+* If the order of execution happens such that I put a middleware function defined before the other
+  dependencies routes are defined, youll run into issue. Order of middleware calls in index file is important for functionality.
+
+* The order of which you define your routes, the order of which you define your middleware will make a difference.
+
+* Middleware requires a response or next function next() or the request hangs.

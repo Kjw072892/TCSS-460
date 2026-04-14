@@ -1,0 +1,80 @@
+REST Key Constraints:
+  * (Client-Server) The client and server are separate components with distinct responsibilities
+  * (Stateless) Each request contains all the information the server needs to process it
+  * (Cacheable) Responses must declare whether they can be cached -> Reduces redundant requests
+  * (Uniform Interface) All resources are accessed through a consistent, standardized interface.
+  * (Layered System) The client does not need to know whether it is talking directly to the server or through intermediaries
+    (Proxies, load balancers)
+  * (Code on Demand) The server can send executable code to the client -> Rarely used in modern APIs; Originally envisioned for browser applets
+
+Resource Hierarchies:
+  * Keep nesting shallow - One or two levels deep.
+  * Deeply nested URLs become hard to read and hard to implement:
+
+    # Too deep - avoid this
+    GET /users/42/posts/7/comments/3/likes/1
+
+    # Better -- flatten when nesting gets deep
+    GET /comments/3/likes
+
+  * A good rule of thumb: if a resource can be identified on its own (like a comment with a unique ID), it probably deserves its own top-level endpoints
+
+Mapping Methods to a Resource:
+  * GET    /users          ← List all users
+  * GET    /users/42       ← Get user 42
+  * POST   /users          ← Create a new user
+  * PUT    /users/42       ← Replace user 42 entirely
+  * PATCH  /users/42       ← Update specific fields of user 42
+  * DELETE /users/42       ← Delete user 42
+
+  * Notice the pattern. The URL stays the same and the method changes. This is Uniform Interface constraint in practice.
+
+PUT vs PATCH:
+  * PUT: Replaces the entire resource. If you send a PUT request, you must include every field, even the ones that you did not changes
+  * PATCH: Updates only the fields you include. Everything else stays as it was.
+
+  {
+    "id" : 42,
+    "name":"Alice",
+    "email":"alice@example.net",
+    "role":"member"
+  }
+
+  PUT /users/42
+  {
+    "name":"Alice",
+    "email":"alice@newdomain.net",
+    "role":"member"
+  }
+
+  * A PUT request must include all fields even though you are only changing the email address
+
+  PATCH /users/42
+  {
+    "email":"alice@newDomain.net"
+  }
+
+  * The PATCH method you can just add the changes that you need.
+
+
+Path Parameters vs. Query Strings
+  * URLs in REST API carry two kinds of variable information: path parameters and query Strings
+  * Path parameters: 
+    - Part of the URL path itself. It identifies which resource you want:
+      GET /users/42
+      GET /movies/tt01111161
+    - Answers the question: "Which specific resource?"
+  
+    - Express calls these "route parameters" and accesses them via request.params. Same concept different terminology.
+  
+  * Query Strings:
+    - Comes after the ? in a URL. 
+    - Does not change which resource you are targeting - it changes how you want the data:
+
+    GET /users?role=admin            ← Filter: only admin users
+    GET /movies?genre=drama&year=2024 ← Filter: drama movies from 2024
+    GET /users?sort=name&order=asc    ← Sort: alphabetical ascending
+    GET /movies?page=2&limit=20       ← Paginate: page 2, 20 per page
+
+Request and Response Bodies:
+  * 

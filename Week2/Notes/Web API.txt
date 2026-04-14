@@ -1,0 +1,211 @@
+Node TypScript code:
+
+  const greeting: string = "Hello from TypeScript!";
+
+    * Javascript we don't define data types
+    * Typescript we declare after the variable name
+    * Type script we do declare.
+
+function add(a: number, b: number) : number {
+  return a + b;
+}
+  * We declare function return type at the end of the signature, we declare the parameter data type as well.
+
+TCS (TypeScript Compiler):
+  * How we compile and run TypeScript
+  * Transpiled -> translating it from TypeScript to Javascript (The action of translating the file into a different language).
+
+Terminal command:
+  * "tsc index.ts"
+  * returns index.js
+
+package.json:
+  * we can run scripts
+  * "build" runs the typescript Compiler
+  * "start" uses the compiled files
+  * "dev" uses the typescript files.
+
+  * When we want to run the scripts we can do "npm run {script name} to run the script.
+
+  * Jest is a test runner
+
+  * Has the dependencies needed for development and only uses dependencies needed for production.
+
+  * To download all of the dependencies we use "npm i" and the terminal will download all the dependencies in the package.json file
+
+  * package-lock.json shows up when we run npm i (node package manager) -> grabs the versions of the package module we are looking for. The carrots (^) in the version
+    says give me the most current version of that module when available. The package-lock notes all of the versions that was brought in from npm i.
+
+
+  .env:
+    * Where we store the secret api key and public api key
+    * database URLS, ports, and app settings
+    * Keeps secrets and config out of source code
+    * add .env to .gitignore so that secret keys aren't being put into clouds.
+
+    PORT=3000
+    WEATHER_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+
+
+index.ts
+  * The entrypoint into the webpage
+  * The name is arbitrary but convention is index.ts
+  * Should be similar to the GUI code in java's main method, only kicks off the GUI and thats it
+
+Express:
+  * Its what builds the flow that handles the http request
+  * We can pass the request to different functions until a function handles the request or sends a response.
+
+Controller Function:
+  * The main function that sends the 'happy path' responses back.
+
+Middleware:
+  * Mostly will send 200's results back ('happy path')
+  * Calls next() so Express keeps going
+  * Responsible for logging
+  * Parsing json
+  * authentication
+  * CORS
+  * error handling
+
+Routes:
+  * Defines what your server should do when a client makes a request to a specific URL with a specific HTTP method
+
+CORS:
+  * Cross-origin Resource
+  * The browser security rule that controls whether a frontend from one origin can make requests to a backend on
+    another origin
+  * app.use(cors()); tells the browser your server allows cross-origin requests
+    - adds the proper response headers
+
+Web APIS: Across the Network:
+  * Your application sends an HTTP GET /api/messages to Remote server
+  * The remote server processes the request
+  * The remote server sends an HTTP 200 OK + JSON body back to your application
+
+  * Slow, Unreliable, Not type-safe, Asynchronous by nature
+
+Network Boundary Changes many things:
+  * Higher latency
+  * Failure can be network, server, DNS, timeout etc.
+  * The data format is serialized text ie JSON, XML
+  * Old clients must still work after server updates
+  * Due to sending data over a network, you must also include authentication for security protocol
+  * Error handling is handled with HTTP status code and error bodies
+
+GraphQL and Beyond
+  * What REST API may look like:
+    - GET /api/movies/550
+    - GET /api/movies/550/reviews
+    - GET /api/movies/550/cast
+  * That is three round trips over the network. Each response might include fields you do not need.
+
+  * GraphQL, you send a single request describing exactly the data you want:
+    - query {
+        movie(id: 550) {
+          title
+          releaseYear
+          rating
+          reviews(limit: 5) {
+              author
+              score
+              text
+          }
+          cast(limit: 10) {
+              name
+              character
+          }
+        }
+      }
+  * The server returns exactly those fields - no more, no less - in one response. One round trip, no wasted data
+  * Most effective: 
+    - Mobile Clients - Bandwidth is limited, so fetching only the fields you need reduces data consumption
+    - Complex Relationships - When resources have deep, nested relationships(movies -> reviews -> reviewers -> other reviews), 
+      this can traverse them in a single query
+    - Multiple client types - A mobile app, a web dashboard, and an admin panel might all need different views of the same data. With REST,
+      you either over-fetch (return everything) or build separate endpoints. With this, each client requests exactly what it needs.
+    
+
+A Complete Request/Response Example:
+  * Here is what a complete web API interaction looks like at the HTTP level. The client wants to get information about a specific movie:
+
+  * Request:
+      GET /api/movies/550 HTTP/1.1
+      HOST: api.example.command
+      ACCEPT: application/json
+  
+  * Response:
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+        "id":550,
+        "title" : "Fight Club",
+        "releaseYear" : 1999,
+        "genres" : ["Drama", "Thriller"],
+        "rating" : 8.4
+      }
+
+  * The requests says "I want the resource at /api/movies/550, and I would like it in JSON format."
+  * The response says: "Here it is (status 200), it is JSON (Content-Type header), and here is the data (body)."
+
+JSON - The Language of Web APIs:
+  * When a web API returns data, it must serialize that data into text that can travel over the network.
+  * JSON (JavaScript Object Notation) is the standard format for this serialization.
+  * JSON can have collections:
+    [
+      {
+        "id" : 550,
+        "title" : "Fight Club",
+        "releaseYear" : 1999
+      },
+      {
+        "id" : 680,
+        "title" : "Pulp Fiction",
+        "releaseYear" : 1994
+      },
+      {
+        "id" : 155,
+        "title" : "The Dark Knight",
+        "releaseYear" : 2008
+      }
+    ]
+
+API Consumers and Providers:
+  * The provider: The server that exposes the API
+    - Defines the available endpoints and their behavior
+    - Handles incoming HTTP requests
+    - Processes data (queries databases, calls other serves, applies business logic)
+    - Returns HTTP responses with appropriate status codes and data
+    - Common API Providers (Node.js and Express)
+    - Responsible for: 
+      * Documenting the API
+      * Validating inputs
+      * Handling errors gracefully
+      * Maintaining backward compatibility
+
+  * The consumer: The client that calls the API
+    - The API consumer is any code that calls the API:
+      * Web front-ends - a React or Next.js app calling the API to display data
+      * Mobile apps - an iOS or Android app calling the same API
+      * Other servers - a different back-end service that needs your data
+      * Scripts and tools - a Python script that automates API calls
+    
+    - API Consumers (Next.js front-end that calls the API to display data to users in a browser).
+  
+  * Proxy Pattern:
+    - Your server sits between your client and the third-party service, forwarding requests and reshaping responses.
+    - Your client sets a request to the server
+    - Your server receives the request from your client and sends a request to the third-party
+    - The third-party responds to the request and sends the response to your server
+    - The server receives the response from the third-party, reshapes the response, and sends the new response to the client
+    - The client receives the response from your server and uses the data.
+  
+  * API Keys:
+    - When you call a third-party API, you typically include your API key in the request:
+
+      GET /3/movie/550 HTTP/1.1
+      Host: api.themoviedb.org
+      Authorization: Bearer your-api-key-here
+
+    - Never expose your API key to the client
